@@ -9,15 +9,15 @@ from PyQt5.QtWidgets import (QApplication, QWidget,
                              QTableWidget, QGroupBox,
                              QTableWidgetItem, QPushButton, 
 							 QMessageBox, QInputDialog)
-#
+
 #проверка чётности недели: если неделя чётная, то одно расписание, в противном случае другое
 today = date.today() 
-num = int(today.isocalendar().week)
+num = int(today.isocalendar().week) #номер недели
 if (num % 2) == 0:
     this_week = "timetable_week2"
 else:
     this_week = "timetable_week1"
-#
+ 
 #создаётся окно
 class MainWindow(QWidget):
     def __init__(self):
@@ -25,12 +25,12 @@ class MainWindow(QWidget):
 
         self._connect_to_db() #подключение к БД 
 
-        self.setWindowTitle("BVT2205 Information") #назначается название окна
+        self.setWindowTitle("BVT2208 Information") #назначается название окна
 
-        self.vbox = QVBoxLayout(self)
+        self.vbox = QVBoxLayout(self) # создаём слой
 
         self.tabs = QTabWidget(self)
-        self.vbox.addWidget(self.tabs)
+        self.vbox.addWidget(self.tabs)# создаём вкладки
 
         self._create_schedule_tab()
         self._create_teacher_tab()
@@ -42,9 +42,9 @@ class MainWindow(QWidget):
 
     # connect to db
     def _connect_to_db(self):
-        self.conn = psycopg2.connect(database="timestable_db",
+        self.conn = psycopg2.connect(database="VVIT7",
                                      user="postgres",
-                                     password="password",
+                                     password="WBGFLHBGF21",
                                      host="localhost",
                                      port="5433")
 
@@ -60,7 +60,7 @@ class MainWindow(QWidget):
         self.teacher_tab = QWidget()
         self.tabs.addTab(self.teacher_tab, "Teacher")
 
-        self.teacher_gbox = QGroupBox("Teacher")
+        self.teacher_gbox = QGroupBox("Teacher") #поле для обьектов
 
         self.svbox = QVBoxLayout()
         self.shbox1 = QHBoxLayout()
@@ -79,7 +79,7 @@ class MainWindow(QWidget):
 
         self.shboxa = QHBoxLayout()
         self.shbox1.addLayout(self.shboxa)
-        self.alter_teacher_button = QPushButton("Alter")
+        self.alter_teacher_button = QPushButton("Alter") #ДОБАВЛЕНИЕ СТОЛБЦОВ
         self.shboxa.addWidget(self.alter_teacher_button)
         self.alter_teacher_button.clicked.connect(lambda ch: self.update_teacher_info('Alter'))
 
@@ -100,7 +100,7 @@ class MainWindow(QWidget):
     # display teacher table
     def _create_teacher_table(self):
         self.teacher_table = QTableWidget()
-        self.teacher_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.teacher_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents) #ПОД КОНТЕКСТ НАСТРАИВАЕТ РАЗМЕР
 
         self.teacher_table.setColumnCount(3)
         self.teacher_table.setHorizontalHeaderLabels(["Full Name", "Subject", ""])
@@ -116,7 +116,7 @@ class MainWindow(QWidget):
         self.cursor.execute("SELECT * FROM teacher")
         records = list(self.cursor.fetchall())
 
-        self.teacher_table.setRowCount(len(records) + 1)
+        self.teacher_table.setRowCount(len(records) + 1) #СЧИТАЕТСЯ КОЛ-ВО СТРОЧЕК И ДОБАВЛЯЕМ 1
 
         for i, r in enumerate(records):
             r = list(r)
@@ -163,12 +163,12 @@ class MainWindow(QWidget):
                             self.conn.commit()
                         except:
                             self.conn.commit()
-                            QMessageBox.about(self, "Error", "Given subject value "
-                                                             "does not exist in subject table")
+                            QMessageBox.about(self, "Error", "БЕРЕТСЯ ЗНАЧЕНИЕ ПРЕДМЕТА "
+                                                             "НЕ ВЫБРАНА В ТАБЛИЦЕ ПРЕДМЕТОВ")
 
             except:
                 self.conn.commit()
-                QMessageBox.about(self, "Error", "Select a non empty row first")
+                QMessageBox.about(self, "Error", "ВЫБРАНА ПУСТАЯ СТРОЧКА")
 
         elif query == 'Delete':
             self.cursor.execute("select count(full_name) from teacher")
@@ -432,7 +432,7 @@ class MainWindow(QWidget):
         self.schedule_gbox.setLayout(self.mvbox)
 
     def btnstate(self, wday):
-        self.day = wday
+        self.day = wday   #В wday АХОДИТСЯ СЕГОДНЕШНЯЯ ДАТА
 
     def _update_schedule_table(self):
         self.cursor.execute(
